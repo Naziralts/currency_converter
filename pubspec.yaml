@@ -1,0 +1,30 @@
+name: currency_converter
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8     # iOS-иконки
+  flutter_bloc: ^9.1.1        # State management (BLoC)
+  bloc: ^9.0.0                # Core BLoC библиотека
+  equatable: ^2.0.7           # Сравнение объектов (удобно для State/Events)
+  get_it: ^8.2.0              # Service Locator (DI)
+  path: ^1.9.1                # Работа с путями файлов
+  sqflite: ^2.4.2             # SQLite база данных
+  intl: ^0.20.2               # Интернационализация (формат дат, чисел, валют)
+  fl_chart: ^1.0.0            # Графики и диаграммы
+  dio: ^5.9.0                 # HTTP-клиент (работа с API)
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0       # Набор правил для чистого кода
+
+flutter:
+  uses-material-design: true
