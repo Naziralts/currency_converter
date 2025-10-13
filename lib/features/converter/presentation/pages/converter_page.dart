@@ -10,8 +10,6 @@ import '../widgets/currency_chart.dart';
 class ConverterPage extends StatelessWidget {
   const ConverterPage({super.key});
 
-  // ---------- Валюты, флаги и названия ----------
-  // Используем Dart record (flag, name) для хранения данных по валюте
   static const _currencyMeta = <String, ({String flag, String name})>{
     'USD': (flag: '🇺🇸', name: 'US Dollar'),
     'EUR': (flag: '🇪🇺', name: 'Euro'),
@@ -31,12 +29,10 @@ class ConverterPage extends StatelessWidget {
     'INR': (flag: '🇮🇳', name: 'Indian Rupee'),
   };
 
-  // Список валют для Dropdown
   static List<String> get _currencies => _currencyMeta.keys.toList();
 
   @override
   Widget build(BuildContext context) {
-    // Формат чисел: 1,234.5678
     final numberFormat = NumberFormat("#,##0.####");
 
     return Scaffold(
@@ -44,20 +40,14 @@ class ConverterPage extends StatelessWidget {
         title: const Text('Currency Converter'),
         centerTitle: true,
       ),
-
-      // BlocConsumer слушает состояние и строит UI
       body: BlocConsumer<ConverterBloc, ConverterState>(
         listener: (context, state) {
-          // Если есть ошибка → показываем SnackBar
-          if (state.error != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.error!)),
-            );
-          }
+          // Убираем автоматическое показывание ошибок в SnackBar
+          // Ошибки теперь показываются в интерфейсе
         },
         builder: (context, state) {
-          final base = state.base;   // базовая валюта
-          final target = state.target; // целевая валюта
+          final base = state.base;
+          final target = state.target;
 
           return Padding(
             padding: const EdgeInsets.all(16.0),
@@ -66,7 +56,6 @@ class ConverterPage extends StatelessWidget {
                 // -------------------- ВЫБОР ВАЛЮТ --------------------
                 Row(
                   children: [
-                    // Dropdown для базовой валюты
                     Expanded(
                       child: _CurrencyDropdown(
                         label: 'From',
@@ -79,21 +68,16 @@ class ConverterPage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 12),
-
-                    // Кнопка "Swap" меняет валюты местами
                     IconButton(
                       tooltip: 'Swap',
                       onPressed: () {
                         context.read<ConverterBloc>()
                           ..add(ConverterBaseChanged(target))
-                          ..add(ConverterTargetChanged(base))
-                          ..add(const ConverterConvertPressed());
+                          ..add(ConverterTargetChanged(base));
                       },
                       icon: const Icon(Icons.swap_horiz),
                     ),
                     const SizedBox(width: 12),
-
-                    // Dropdown для целевой валюты
                     Expanded(
                       child: _CurrencyDropdown(
                         label: 'To',
@@ -112,18 +96,19 @@ class ConverterPage extends StatelessWidget {
 
                 // -------------------- ВВОД СУММЫ --------------------
                 TextField(
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
-                  decoration: const InputDecoration(
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  decoration: InputDecoration(
                     labelText: 'Amount',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.calculate),
+                    border: const OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.calculate),
+                    // Показываем ошибку под полем ввода
+                    errorText: state.error?.contains('Введите корректную сумму') == true 
+                        ? state.error 
+                        : null,
                   ),
-                  // Контроллер берёт значение из state
                   controller: TextEditingController(text: state.amountText)
                     ..selection = TextSelection.collapsed(
                         offset: state.amountText.length),
-                  // При изменении → событие AmountChanged
                   onChanged: (txt) => context
                       .read<ConverterBloc>()
                       .add(ConverterAmountChanged(txt)),
@@ -144,8 +129,34 @@ class ConverterPage extends StatelessWidget {
 
                 const SizedBox(height: 16),
 
+                // -------------------- ОШИБКИ --------------------
+                if (state.error != null && 
+                    !state.error!.contains('Введите корректную сумму'))
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.red[50],
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.red[200]!),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.error_outline, color: Colors.red[700]),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            state.error!,
+                            style: TextStyle(color: Colors.red[700]),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                const SizedBox(height: 16),
+
                 // -------------------- РЕЗУЛЬТАТ --------------------
-                if (state.result != null)
+                if (state.result != null && state.error == null)
                   _ResultCard(
                     amountText: state.amountText,
                     base: base,
@@ -157,7 +168,7 @@ class ConverterPage extends StatelessWidget {
                 const SizedBox(height: 16),
 
                 // -------------------- ГРАФИК --------------------
-                if (state.history.isNotEmpty)
+                if (state.history.isNotEmpty && state.error == null)
                   Card(
                     elevation: 1,
                     child: Padding(
@@ -210,24 +221,23 @@ class _CurrencyDropdown extends StatelessWidget {
         labelText: label,
         border: const OutlineInputBorder(),
       ),
-      isExpanded: true, // растягиваем на всю ширину
+      isExpanded: true,
       items: items.map((code) {
         final m = meta[code]!;
         return DropdownMenuItem(
           value: code,
           child: Row(
             children: [
-              Text(m.flag, style: const TextStyle(fontSize: 18)), // флаг
+              Text(m.flag, style: const TextStyle(fontSize: 18)),
               const SizedBox(width: 8),
               Text(
                 code,
-                style:
-                    const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
               ),
               const SizedBox(width: 6),
               Flexible(
                 child: Text(
-                  m.name, // название валюты
+                  m.name,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(color: Colors.black54, fontSize: 13),
                 ),
