@@ -35,25 +35,35 @@ class ConverterPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final numberFormat = NumberFormat("#,##0.####");
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Currency Converter'),
-        centerTitle: true,
-      ),
-      body: BlocConsumer<ConverterBloc, ConverterState>(
-        listener: (context, state) {
-          // Убираем автоматическое показывание ошибок в SnackBar
-          // Ошибки теперь показываются в интерфейсе
-        },
-        builder: (context, state) {
-          final base = state.base;
-          final target = state.target;
+    final isWide = MediaQuery.of(context).size.width > 600;
+    final horizontalPadding =
+        isWide ? MediaQuery.of(context).size.width * 0.2 : 16.0;
 
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ListView(
+    return BlocConsumer<ConverterBloc, ConverterState>(
+      listener: (context, state) {
+        if (state.error != null &&
+            !state.error!.contains('Введите корректную сумму')) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.error!)),
+          );
+        }
+      },
+      builder: (context, state) {
+        final base = state.base;
+        final target = state.target;
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+
+        return SafeArea(
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            padding: EdgeInsets.symmetric(
+              horizontal: horizontalPadding,
+              vertical: 20,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // -------------------- ВЫБОР ВАЛЮТ --------------------
+              
                 Row(
                   children: [
                     Expanded(
@@ -92,19 +102,19 @@ class ConverterPage extends StatelessWidget {
                   ],
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
 
-                // -------------------- ВВОД СУММЫ --------------------
                 TextField(
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
                   decoration: InputDecoration(
                     labelText: 'Amount',
                     border: const OutlineInputBorder(),
                     prefixIcon: const Icon(Icons.calculate),
-                    // Показываем ошибку под полем ввода
-                    errorText: state.error?.contains('Введите корректную сумму') == true 
-                        ? state.error 
-                        : null,
+                    errorText:
+                        state.error?.contains('Введите корректную сумму') == true
+                            ? state.error
+                            : null,
                   ),
                   controller: TextEditingController(text: state.amountText)
                     ..selection = TextSelection.collapsed(
@@ -114,23 +124,86 @@ class ConverterPage extends StatelessWidget {
                       .add(ConverterAmountChanged(txt)),
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 24),
 
-                // -------------------- КНОПКА КОНВЕРТАЦИИ --------------------
-                ElevatedButton.icon(
-                  onPressed: state.loading
+               
+                GestureDetector(
+                  onTap: state.loading
                       ? null
                       : () => context
                           .read<ConverterBloc>()
                           .add(const ConverterConvertPressed()),
-                  icon: const Icon(Icons.currency_exchange),
-                  label: const Text('Convert'),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 250),
+                    height: 55,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(14),
+                      gradient: state.loading
+                          ? LinearGradient(colors: [
+                              Colors.grey.shade400,
+                              Colors.grey.shade500,
+                            ])
+                          : LinearGradient(
+                              colors: isDark
+                                  ? [
+                                      const Color(0xFF00E1D2),
+                                      const Color(0xFF007AFF),
+                                    ]
+                                  : [
+                                      const Color(0xFF0066FF),
+                                      const Color(0xFF00CCFF),
+                                    ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                      boxShadow: [
+                        if (!state.loading)
+                          BoxShadow(
+                            color: (isDark
+                                    ? Colors.tealAccent
+                                    : Colors.blueAccent)
+                               
+                                .withOpacity(0.3),
+                            blurRadius: 12,
+                            offset: const Offset(0, 5),
+                          ),
+                      ],
+                    ),
+                    child: Center(
+                      child: state.loading
+                          ? const SizedBox(
+                              width: 26,
+                              height: 26,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 3,
+                                color: Colors.white,
+                              ),
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                Icon(Icons.currency_exchange,
+                                    color: Colors.white),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Convert',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                    letterSpacing: 0.8,
+                                  ),
+                                ),
+                              ],
+                            ),
+                    ),
+                  ),
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 24),
 
-                // -------------------- ОШИБКИ --------------------
-                if (state.error != null && 
+     
+                if (state.error != null &&
                     !state.error!.contains('Введите корректную сумму'))
                   Container(
                     padding: const EdgeInsets.all(12),
@@ -155,7 +228,6 @@ class ConverterPage extends StatelessWidget {
 
                 const SizedBox(height: 16),
 
-                // -------------------- РЕЗУЛЬТАТ --------------------
                 if (state.result != null && state.error == null)
                   _ResultCard(
                     amountText: state.amountText,
@@ -165,39 +237,38 @@ class ConverterPage extends StatelessWidget {
                     meta: _currencyMeta,
                   ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
 
-                // -------------------- ГРАФИК --------------------
+                // ---------- График ----------
                 if (state.history.isNotEmpty && state.error == null)
                   Card(
-                    elevation: 1,
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
                     child: Padding(
                       padding: const EdgeInsets.all(12.0),
                       child: CurrencyChart(points: state.history),
                     ),
-                  )
-                else
-                  const SizedBox.shrink(),
+                  ),
 
-                // -------------------- ИНДИКАТОР ЗАГРУЗКИ --------------------
-                if (state.loading) const LinearProgressIndicator(),
+                if (state.loading) ...[
+                  const SizedBox(height: 20),
+                  const LinearProgressIndicator(),
+                ],
 
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
 
-                // -------------------- ПОДСКАЗКА --------------------
                 _HistoryHint(target: target),
               ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }
 
-// ===================================================================
-// Виджет выбора валюты (Dropdown)
-// ===================================================================
+
 class _CurrencyDropdown extends StatelessWidget {
   final String label;
   final String value;
@@ -220,6 +291,7 @@ class _CurrencyDropdown extends StatelessWidget {
       decoration: InputDecoration(
         labelText: label,
         border: const OutlineInputBorder(),
+        isDense: true,
       ),
       isExpanded: true,
       items: items.map((code) {
@@ -230,16 +302,11 @@ class _CurrencyDropdown extends StatelessWidget {
             children: [
               Text(m.flag, style: const TextStyle(fontSize: 18)),
               const SizedBox(width: 8),
-              Text(
-                code,
-                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-              ),
-              const SizedBox(width: 6),
               Flexible(
                 child: Text(
-                  m.name,
+                  '${m.name} ($code)',
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: Colors.black54, fontSize: 13),
+                  style: const TextStyle(fontSize: 13),
                 ),
               ),
             ],
@@ -251,9 +318,7 @@ class _CurrencyDropdown extends StatelessWidget {
   }
 }
 
-// ===================================================================
-// Карточка результата
-// ===================================================================
+
 class _ResultCard extends StatelessWidget {
   final String amountText;
   final String base;
@@ -275,18 +340,17 @@ class _ResultCard extends StatelessWidget {
     final t = meta[target];
     return Card(
       elevation: 1,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
         leading: const Icon(Icons.check_circle_outline),
-        title: Text('$amountText ${b != null ? '${b.flag} $base' : base}'),
-        subtitle: Text('= $result ${t != null ? '${t.flag} $target' : target}'),
+        title: Text('$amountText ${b?.flag ?? ''} $base'),
+        subtitle: Text('= $result ${t?.flag ?? ''} $target'),
       ),
     );
   }
 }
 
-// ===================================================================
-// Подсказка для пользователя
-// ===================================================================
+
 class _HistoryHint extends StatelessWidget {
   final String target;
   const _HistoryHint({required this.target});
@@ -294,11 +358,10 @@ class _HistoryHint extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      'Tip: если график пустой для выбранной пары — возможно, Frankfurter '
-      'не поддерживает одну из валют (например, AED/KGS/KZT). '
-      'Конвертация всё равно работает.',
+      '💡 Если график пустой — возможно, Frankfurter не поддерживает валюту '
+      '($target). Конвертация всё равно работает.',
       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Colors.black54,
+            color: Colors.grey,
           ),
     );
   }
