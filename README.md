@@ -1,39 +1,44 @@
-💱 Currency Converter 
-A simple and elegant Flutter app for currency conversion with a historical exchange rate chart.
-
-
+Currency Converter App
+A modern Currency Converter built with Flutter, following Clean Architecture principles.
+The app allows users to convert between currencies, view historical exchange rate charts, and access data both online and offline.
 ✨ Features
-Convert between different currencies
-View historical exchange rate data in a beautiful chart
-Support for major world currencies 🌎
-Display flags for each currency
-🛠 Technologies
-Flutter – Cross-platform framework
+💱 Convert between different currencies
+📊 View historical exchange rate data in a beautiful chart
+🌍 Support for major world currencies with flags
+🌓 Dark & Light Theme support
+📱 Responsive UI — works perfectly on all screen sizes (mobile, tablet, and web)
+💾 Offline storage with SQLite
+⚙️ Clean architecture using BLoC & GetIt
+🔄 Real-time data from reliable APIs
+🛠 Technologies Used
+Flutter – Cross-platform mobile framework
 BLoC – State management
 Equatable – Simplifies object comparison
 GetIt – Dependency injection
 Dio – HTTP client for API requests
 FlChart – Chart rendering
-Sqflite – Local data storage
-Intl – Internationalization & formatting
+Sqflite – Local data storage (SQLite)
+Intl – Internationalization and formatting
+SharedPreferences – Local storage for small preferences
 
-⚡ Installation
-Make sure Flutter SDK is installed
-Clone the repository:
-git clone <your-repo-url>
-Navigate to the project directory:
-cd currency_converter_app
-Install dependencies:
-flutter pub get
-▶ Running the App
-Run the application on a connected device or emulator:
-flutter run
-
-Nazira Altybaeva — Flutter developer
 🌐 APIs
 The app uses the following APIs:
-FreeCurrencyAPI – For current exchange rates
-Frankfurter API – For historical exchange rate data
+FreeCurrencyAPI – for real-time currency exchange rates
+Frankfurter API – for historical exchange rate data and charts
+
+📱 Responsive Design
+The app automatically adjusts layouts for all screen sizes:
+📲 Mobile
+💻 Tablet
+🖥 Web
+
+With smooth transitions between Light 🌞 and Dark 🌙 modes.
+Author
+Nazira Altybaeva — Flutter Developer
+Focused on Clean Architecture, BLoC pattern, and modern responsive UI design.
+
+
+
 🖼 ## 📸 Screenshots
 
 ### 💡 Light Mode
