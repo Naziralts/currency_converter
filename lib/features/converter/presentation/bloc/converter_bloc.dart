@@ -81,7 +81,6 @@ class ConverterBloc extends Bloc<ConverterEvent, ConverterState> {
         return;
       }
 
-      // Пробуем превратить строку в число
       final amount = double.tryParse(state.amountText);
       if (amount == null || amount <= 0) {
         emit(state.copyWith(

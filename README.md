@@ -1,4 +1,4 @@
-💱 Currency Converter App
+💱 Currency Converter 
 A simple and elegant Flutter app for currency conversion with a historical exchange rate chart.
 
 
@@ -34,7 +34,25 @@ Nazira Altybaeva — Flutter developer
 The app uses the following APIs:
 FreeCurrencyAPI – For current exchange rates
 Frankfurter API – For historical exchange rate data
-🖼 Screenshots
+🖼 ## 📸 Screenshots
+
+### 💡 Light Mode
+![Currency Light](assets/screenshots/currency.light.error.jpg)
+
+### 🌙 Dark Mode
+![Currency Dark](assets/screenshots/currency.dark.jpg)
+
+### ⚙️ Converter (Dark)
+![Converter Dark](assets/screenshots/converter.dark.jpg)
+
+### 🚫 Error Example
+![Error Example](assets/screenshots/currency.error.jpg)
+
+## 🎥 Demo Video
+
+[▶️ Watch Demo](assets/demo/currency.demo.mp4)
+
+
 
 
 📌 Authorer Developer

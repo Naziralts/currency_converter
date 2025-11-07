@@ -239,7 +239,7 @@ class ConverterPage extends StatelessWidget {
 
                 const SizedBox(height: 20),
 
-                // ---------- График ----------
+               
                 if (state.history.isNotEmpty && state.error == null)
                   Card(
                     elevation: 2,

@@ -78,7 +78,7 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       themeMode: _themeMode,
 
-      // 🌞 Светлая тема
+   
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: const ColorScheme.light(

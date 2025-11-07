@@ -2,18 +2,14 @@ import '../../../../core/usecase/usecase.dart';
 import '../entities/history_point.dart';
 import '../repositories/rate_repository.dart';
 
-/// UseCase для получения истории курсов валют.
-/// UseCase — это слой бизнес-логики в чистой архитектуре.
-/// Он использует репозиторий, чтобы получить данные, и возвращает их вызывающему слою (например, BLoC).
 class GetHistory implements UseCase<List<HistoryPoint>, GetHistoryParams> {
-  final RateRepository repo; // репозиторий для получения данных
-
-  /// Конструктор, принимает репозиторий
+  final RateRepository repo; 
+  
   GetHistory(this.repo);
 
-  /// Основной метод UseCase
-  /// [params] — параметры запроса истории (базовая валюта, целевая валюта, дни)
-  /// Возвращает Future<List<HistoryPoint>>
+
+  /// [params] 
+  
   @override
   Future<List<HistoryPoint>> call(GetHistoryParams params) {
     return repo.getHistory(
@@ -24,11 +20,11 @@ class GetHistory implements UseCase<List<HistoryPoint>, GetHistoryParams> {
   }
 }
 
-/// Параметры для GetHistory UseCase
+
 class GetHistoryParams {
-  final String base;   // базовая валюта
-  final String target; // целевая валюта
-  final int days;      // количество дней для истории (по умолчанию 7)
+  final String base;   
+  final String target; 
+  final int days;      
 
   GetHistoryParams({
     required this.base,
