@@ -40,17 +40,11 @@ void main() {
     await bloc.close();
   });
 
-  // --------------------------------------------------
-  // 1️⃣ Initial State
-  // --------------------------------------------------
-
   test('initial state is default ConverterState', () {
     expect(bloc.state, const ConverterState());
   });
 
-  // --------------------------------------------------
-  // 2️⃣ Empty input
-  // --------------------------------------------------
+ 
 
   blocTest<ConverterBloc, ConverterState>(
     'emits error when amount is empty',
@@ -72,9 +66,7 @@ void main() {
     ],
   );
 
-  // --------------------------------------------------
-  // 3️⃣ Zero input (invalid number)
-  // --------------------------------------------------
+  
 
   blocTest<ConverterBloc, ConverterState>(
     'emits error when amount is zero',
@@ -96,9 +88,7 @@ void main() {
     ],
   );
 
-  // --------------------------------------------------
-  // 4️⃣ Success flow
-  // --------------------------------------------------
+
 
   blocTest<ConverterBloc, ConverterState>(
     'emits loading then success when API works',
@@ -117,7 +107,7 @@ void main() {
       bloc.add(const ConverterConvertPressed());
     },
     expect: () => [
-      isA<ConverterState>(), // amount changed
+      isA<ConverterState>(), 
       isA<ConverterState>().having((s) => s.loading, 'loading', true),
       isA<ConverterState>()
           .having((s) => s.loading, 'loading', false)
@@ -125,9 +115,7 @@ void main() {
     ],
   );
 
-  // --------------------------------------------------
-  // 5️⃣ API Exception
-  // --------------------------------------------------
+ 
 
   blocTest<ConverterBloc, ConverterState>(
     'emits error when API throws exception',

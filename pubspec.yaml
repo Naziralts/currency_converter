@@ -1,5 +1,5 @@
 name: currency_converter
-description: "Currency Converter with Clean Architecture + BLoC"
+description: Currency Converter with Clean Architecture + BLoC
 publish_to: 'none'
 
 version: 1.0.0+1
@@ -39,11 +39,12 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  # TEST PACKAGES
-  mocktail: ^1.0.4
-  bloc_test: ^10.0.0
+  # TEST
   integration_test:
     sdk: flutter
+
+  mocktail: ^1.0.4
+  bloc_test: ^10.0.0
 
   flutter_lints: ^5.0.0
 
